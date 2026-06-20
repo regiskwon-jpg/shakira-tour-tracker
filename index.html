@@ -8,15 +8,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0a0a0f; color: #e8e6e0; font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
-  select option { background: #1a1a12; color: #e8e6e0; }
-  input, textarea, select { outline: none; }
-  ::-webkit-scrollbar { width: 6px; } 
-  ::-webkit-scrollbar-track { background: #0a0a0f; }
-  ::-webkit-scrollbar-thumb { background: #2a2a18; border-radius: 3px; }
-  .fade-in { animation: fadeIn 0.2s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0a0a0f; color: #e8e6e0; font-family: 'Inter','Helvetica Neue',Arial,sans-serif; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0a0f; }
+::-webkit-scrollbar-thumb { background: #2a2a18; border-radius: 3px; }
+.fade-in { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+select option { background: #1a1a12; color: #e8e6e0; }
+input, textarea, select { outline: none; }
 </style>
 </head>
 <body>
@@ -24,133 +24,263 @@
 <script type="text/babel">
 const { useState, useRef } = React;
 
+const T = {
+  en: {
+    title: "Shakira 2026 China Tour — Operations Tracker",
+    subtitle: "Shanghai Dec 12–13 · Guangzhou Dec 19–20 · $20M Gross Guarantee",
+    org: "Scotti Bros Asia × WME",
+    tabs: ["📧 Emails", "✅ Actions", "＋ Log Email", "✦ Ask AI", "📊 Summary"],
+    tabKeys: ["emails","actions","add","ai","summary"],
+    catAll: "All",
+    cats: ["All","Offer / Deal","Legal / Binder","Due Diligence","Venue / Consent","Marketing","Logistics","Payment","Regulatory","Timeline"],
+    stats: ["Emails","Total Actions","Open","In Progress","Blocked","Done"],
+    actionItems: "Action Items",
+    addAction: "+ Add Action Item",
+    owner: "Owner",
+    due: "Due Date",
+    save: "Save",
+    cancel: "Cancel",
+    actionPlaceholder: "Describe the action required...",
+    ownerPlaceholder: "Who is responsible?",
+    duePlaceholder: "TBD",
+    parseBtn: "✦ Parse & Log Email",
+    parsing: "Analyzing with AI...",
+    askBtn: "Ask",
+    asking: "...",
+    aiLabel: "✦ AI Analysis",
+    quickPrompts: ["What payments are pending?","What are all open actions?","Who needs to sign what?","Summarize the deal structure","What's blocking progress?"],
+    emailBody: "Email Body",
+    emailBodyPlaceholder: "Paste the full email body here...",
+    addEmailNote: "Paste a new email below. AI will auto-extract summary, category, tags, and action items.",
+    apiKeyNote: " — Add your API key (🔑 top right) to enable AI parsing.",
+    askNote: "Ask anything about the tour — payments, open actions, deal structure, next steps.",
+    apiKeyLabel: "Enter your Anthropic API key to enable AI features:",
+    apiKeySave: "Save",
+    apiKeySet: "🔑 Key Set",
+    apiKeyBtn: "🔑 API Key",
+    from: "From", to: "To", subject: "Subject", date: "Date",
+    statusLabels: { open:"Open", "in-progress":"In Progress", done:"Done", blocked:"Blocked" },
+    summaryTitle: "Project Summary · 项目概要",
+    confidential: "Confidential — For internal use by Scotti Bros Asia LLC, WME, and authorized partners only.",
+  },
+  zh: {
+    title: "Shakira 2026 中国巡演 — 运营追踪系统",
+    subtitle: "上海 12月12–13日 · 广州 12月19–20日 · 2000万美元总保证金",
+    org: "斯科蒂兄弟亚洲 × WME",
+    tabs: ["📧 邮件", "✅ 行动项", "＋ 录入邮件", "✦ AI问询", "📊 项目概要"],
+    tabKeys: ["emails","actions","add","ai","summary"],
+    catAll: "全部",
+    cats: ["全部","报价/协议","法律/保证金","尽职调查","场地/同意函","市场营销","物流","付款","法规","时间线"],
+    stats: ["邮件总数","行动项总数","待处理","进行中","受阻","已完成"],
+    actionItems: "行动项",
+    addAction: "+ 添加行动项",
+    owner: "负责人",
+    due: "截止日期",
+    save: "保存",
+    cancel: "取消",
+    actionPlaceholder: "描述所需行动...",
+    ownerPlaceholder: "谁负责？",
+    duePlaceholder: "待定",
+    parseBtn: "✦ AI解析并录入",
+    parsing: "AI分析中...",
+    askBtn: "询问",
+    asking: "...",
+    aiLabel: "✦ AI分析",
+    quickPrompts: ["哪些付款仍未完成？","所有待处理行动项是什么？","谁还需要签署什么？","总结交易结构","什么在阻碍进展？"],
+    emailBody: "邮件正文",
+    emailBodyPlaceholder: "在此粘贴完整邮件内容...",
+    addEmailNote: "粘贴新邮件，AI将自动提取摘要、类别、标签和行动项。",
+    apiKeyNote: " — 请在右上角添加API密钥以启用AI解析。",
+    askNote: "询问巡演相关任何问题——付款、待处理行动、交易结构、下一步等。",
+    apiKeyLabel: "输入Anthropic API密钥以启用AI功能：",
+    apiKeySave: "保存",
+    apiKeySet: "🔑 已设置",
+    apiKeyBtn: "🔑 API密钥",
+    from: "发件人", to: "收件人", subject: "主题", date: "日期",
+    statusLabels: { open:"待处理", "in-progress":"进行中", done:"已完成", blocked:"受阻" },
+    summaryTitle: "Project Summary · 项目概要",
+    confidential: "保密文件 — 仅供斯科蒂兄弟亚洲、WME及授权合作方内部使用。",
+  }
+};
+
 const SEED_EMAILS = [
   {
-    id: 1,
-    date: "2026-05-31",
+    id: 1, date: "2026-05-31",
     from: "Regis Kwong <regis@scottibroasia.com>",
     to: "Rob Markus <rob@wmeagency.com>",
     subject: "RE: Shakira – China Tour Multi-City Best & Final Offer (December 2026)",
-    category: "Offer / Deal",
-    summary: "Scotti Bros Asia submitted the dual-city BAFO. 4 firm shows (Shanghai Dec 12-13, Guangzhou Dec 19-20) + 2 options. $20M gross guarantee ($5M/show). 50/50 payment: $10M on signing, $10M 30 days pre-show. 100% box office risk with promoter. 90/10 merch split. 16% China tax gross deducted at escrow. Turnkey production, 25,000kg freight, private air charter included.",
+    subjectZh: "Shakira – 中国巡演双城最终报价（2026年12月）",
+    category: "Offer / Deal", categoryZh: "报价/协议",
+    summary: "Scotti Bros Asia submitted the dual-city BAFO. 4 firm shows (Shanghai Dec 12-13, Guangzhou Dec 19-20) + 2 options. $20M gross guarantee ($5M/show). 50/50 payment: $10M on signing, $10M 30 days pre-show. 100% box office risk with promoter. 90/10 merch split. 16% China tax deducted at escrow. Turnkey production, 25,000kg freight, private air charter included.",
+    summaryZh: "斯科蒂兄弟亚洲提交双城最终报价。4场确定演出（上海12月12-13日，广州12月19-20日）+ 2场可选。2000万美元总保证金（每场500万）。50/50付款：签约付1000万，演出前30天付1000万。100%票房风险由主办方承担。周边商品90/10分成。16%中国税款在托管账户扣除。包含全套制作、25000公斤货运、私人包机。",
     tags: ["BAFO", "Financial", "Structure"],
     actionItems: [
-      { id: "a1", text: "WME to confirm acceptance or rejection of BAFO", owner: "WME / Rob Markus", due: "TBD", status: "open" },
-      { id: "a2", text: "Execute Long-Form Agreement upon WME confirmation", owner: "Scotti Bros Asia", due: "TBD", status: "open" },
+      { id:"a1", text:"WME to confirm acceptance or rejection of BAFO", textZh:"WME确认接受或拒绝最终报价", owner:"WME / Rob Markus", due:"TBD", status:"open" },
+      { id:"a2", text:"Execute Long-Form Agreement upon WME confirmation", textZh:"WME确认后签署长格式合同", owner:"Scotti Bros Asia", due:"TBD", status:"open" },
     ],
   },
   {
-    id: 2,
-    date: "2026-06-02",
+    id: 2, date: "2026-06-02",
     from: "WME LDN <wme@wmeagency.com>",
     to: "Scotti Bros Asia <regis@scottibroasia.com>",
     subject: "Binder Letter – Shakira China Tour (Dual-City)",
-    category: "Legal / Binder",
-    summary: "WME issued binder letter template (LDN entity) to lock in Scotti Bros Asia's firm offer. Purchaser must remit binder amount; offer is irrevocable once binder is sent. Binder applied toward deposit on acceptance. All disputes governed by English law (London). Confidentiality of all terms required.",
-    tags: ["Binder", "Legal", "WME LDN"],
+    subjectZh: "保证金函 – Shakira中国巡演（双城）",
+    category: "Legal / Binder", categoryZh: "法律/保证金",
+    summary: "WME issued binder letter template (LDN entity). Purchaser must remit binder; offer irrevocable once sent. Binder applied toward deposit on acceptance. Disputes governed by English law (London). Full confidentiality required.",
+    summaryZh: "WME发出保证金函模板（伦敦实体）。购买方须汇付保证金；发送后报价不可撤销。保证金在接受后计入定金。争议适用英国法律（伦敦）。须严格保密。",
+    tags: ["Binder","Legal","WME LDN"],
     actionItems: [
-      { id: "a3", text: "Insert binder amount (USD) and fill all bracketed fields in binder letter", owner: "WME LDN", due: "TBD", status: "open" },
-      { id: "a4", text: "Scotti Bros Asia to sign and return binder letter", owner: "Scotti Bros Asia / Anthony Scotti", due: "TBD", status: "open" },
-      { id: "a5", text: "Wire binder payment to WME LDN bank account per wire instructions", owner: "Scotti Bros Asia", due: "TBD", status: "open" },
+      { id:"a3", text:"Fill all bracketed fields in binder letter (amount, dates, entity)", textZh:"填写保证金函所有括号内容（金额、日期、实体）", owner:"WME LDN", due:"TBD", status:"open" },
+      { id:"a4", text:"Scotti Bros Asia to sign and return binder letter", textZh:"斯科蒂兄弟亚洲签署并退回保证金函", owner:"Anthony Scotti", due:"TBD", status:"open" },
+      { id:"a5", text:"Wire binder payment to WME LDN bank account", textZh:"向WME伦敦银行账户汇付保证金", owner:"Scotti Bros Asia", due:"TBD", status:"open" },
     ],
   },
   {
-    id: 3,
-    date: "2026-05-31",
+    id: 3, date: "2026-05-31",
     from: "WME Compliance <compliance@wmeagency.com>",
     to: "Scotti Bros Asia <regis@scottibroasia.com>",
     subject: "WME Due Diligence Form – Shakira (Dec 2026 China Tour)",
-    category: "Due Diligence",
-    summary: "WME due diligence form completed. Artist: Shakira Isabel Mebarak Ripoll. Dates: Dec 12-13 (Shanghai Stadium) & Dec 19-20 (Guangzhou Nansha Center). Party 1: Scotti Bros Asia LLC (Promoter, Anthony Scotti). Party 2: Shanghai Jiushi Entertainments (Co-Promoter, Xia Qing). Party 3: Shanghai Magic Live Entertainment Co. Ltd. (Tour Execution, Gao Hong Qi). Jiushi confirmed as state-owned venue owner. Bank: JP Morgan Chase, Scotti Bros Asia LLC, Acct 515694662, Routing 322271627.",
-    tags: ["Due Diligence", "KYC", "Compliance"],
+    subjectZh: "WME尽职调查表 – Shakira（2026年12月中国巡演）",
+    category: "Due Diligence", categoryZh: "尽职调查",
+    summary: "Due diligence form completed. Parties: Scotti Bros Asia LLC (Promoter, Anthony Scotti), Shanghai Jiushi Entertainments (Co-Promoter, Xia Qing), Shanghai Magic Live (Tour Execution, Gao Hong Qi). Jiushi confirmed state-owned. Bank: JP Morgan Chase, Scotti Bros Asia, Acct 515694662, Routing 322271627.",
+    summaryZh: "尽职调查表已完成。各方：斯科蒂兄弟亚洲（主办方，安东尼·斯科蒂）、上海久事娱乐（联合主办，夏青）、上海魔力现场（巡演执行，高洪奇）。久事集团确认为国有企业。银行：摩根大通，斯科蒂兄弟亚洲，账号515694662，路由322271627。",
+    tags: ["Due Diligence","KYC","Compliance"],
     actionItems: [
-      { id: "a6", text: "WME to review and initial due diligence form", owner: "WME Booking Agent", due: "TBD", status: "open" },
-      { id: "a7", text: "Confirm government/state ownership disclosure for Jiushi (venue)", owner: "Scotti Bros Asia", due: "TBD", status: "done" },
-      { id: "a8", text: "Provide EIN for Scotti Bros Asia bank account (left blank on form)", owner: "Scotti Bros Asia", due: "TBD", status: "open" },
-      { id: "a9", text: "Add Party 4 bank details if additional remitting banks are involved", owner: "Scotti Bros Asia", due: "TBD", status: "open" },
+      { id:"a6", text:"WME booking agent to review and initial due diligence form", textZh:"WME订演代理审核并初签尽职调查表", owner:"WME Booking Agent", due:"TBD", status:"open" },
+      { id:"a7", text:"Confirm government/state ownership disclosure for Jiushi", textZh:"确认久事集团政府/国有所有权披露", owner:"Scotti Bros Asia", due:"TBD", status:"done" },
+      { id:"a8", text:"Provide EIN for Scotti Bros Asia bank account (left blank)", textZh:"提供斯科蒂兄弟亚洲银行账户EIN（当前空白）", owner:"Scotti Bros Asia", due:"TBD", status:"open" },
+      { id:"a9", text:"Add Party 4 bank details if additional remitting banks involved", textZh:"如有其他汇款银行，添加第四方银行信息", owner:"Scotti Bros Asia", due:"TBD", status:"open" },
     ],
   },
   {
-    id: 4,
-    date: "2026-05-15",
+    id: 4, date: "2026-05-15",
     from: "Shanghai Magic Live <gaohongqi@magiclivent.com>",
     to: "Shanghai Stadium Management",
     subject: "Artist Consent Letter – Shakira / Shanghai Stadium (Dec 12-13, 2026)",
-    category: "Venue / Consent",
-    summary: "Shakira consent letter for Shanghai Stadium dated Dec 12 & 13, 2026. Issued by Shanghai Magic Live Entertainment Co. Ltd. for venue booking and reservation purposes only. Artist signature and date fields remain blank — pending Shakira execution.",
-    tags: ["Consent Letter", "Venue Hold", "Shanghai"],
+    subjectZh: "艺人同意函 – Shakira / 上海体育场（2026年12月12-13日）",
+    category: "Venue / Consent", categoryZh: "场地/同意函",
+    summary: "Shakira consent letter for Shanghai Stadium, Dec 12 & 13, 2026. Issued by Shanghai Magic Live for venue booking purposes only. Artist signature and date fields blank — pending Shakira execution.",
+    summaryZh: "Shakira上海体育场同意函，2026年12月12-13日。由上海魔力现场为场地预订目的出具。艺人签名和日期栏空白——待Shakira签署。",
+    tags: ["Consent Letter","Venue Hold","Shanghai"],
     actionItems: [
-      { id: "a10", text: "Shakira to sign and date Shanghai consent letter", owner: "Shakira / WME", due: "TBD", status: "open" },
-      { id: "a11", text: "Return executed consent letter to Shanghai Stadium management", owner: "Shanghai Magic Live", due: "TBD", status: "open" },
+      { id:"a10", text:"Shakira to sign and date Shanghai consent letter", textZh:"Shakira签署并注明上海同意函日期", owner:"Shakira / WME", due:"TBD", status:"open" },
+      { id:"a11", text:"Return executed consent letter to Shanghai Stadium management", textZh:"将已签署同意函退回上海体育场管理方", owner:"Shanghai Magic Live", due:"TBD", status:"open" },
     ],
   },
   {
-    id: 5,
-    date: "2026-05-15",
+    id: 5, date: "2026-05-15",
     from: "Shanghai Magic Live <gaohongqi@magiclivent.com>",
     to: "Guangzhou Nansha Center Management",
     subject: "Artist Consent Letter – Shakira / Guangzhou Nansha (Dec 19-20, 2026)",
-    category: "Venue / Consent",
-    summary: "Shakira consent letter for Greater Bay Area Culture & Sports Center, Guangzhou, dated Dec 19 & 20, 2026. Issued by Shanghai Magic Live Entertainment Co. Ltd. for venue booking purposes. Artist signature and date fields remain blank — pending Shakira execution.",
-    tags: ["Consent Letter", "Venue Hold", "Guangzhou"],
+    subjectZh: "艺人同意函 – Shakira / 广州南沙（2026年12月19-20日）",
+    category: "Venue / Consent", categoryZh: "场地/同意函",
+    summary: "Shakira consent letter for Greater Bay Area Culture & Sports Center, Guangzhou, Dec 19-20, 2026. Artist signature and date fields blank — pending Shakira execution.",
+    summaryZh: "Shakira广州南沙大湾区文化体育中心同意函，2026年12月19-20日。艺人签名和日期栏空白——待Shakira签署。",
+    tags: ["Consent Letter","Venue Hold","Guangzhou"],
     actionItems: [
-      { id: "a12", text: "Shakira to sign and date Guangzhou consent letter", owner: "Shakira / WME", due: "TBD", status: "open" },
-      { id: "a13", text: "Return executed consent letter to Guangzhou Nansha Center", owner: "Shanghai Magic Live", due: "TBD", status: "open" },
+      { id:"a12", text:"Shakira to sign and date Guangzhou consent letter", textZh:"Shakira签署并注明广州同意函日期", owner:"Shakira / WME", due:"TBD", status:"open" },
+      { id:"a13", text:"Return executed consent letter to Guangzhou Nansha Center", textZh:"将已签署同意函退回广州南沙中心", owner:"Shanghai Magic Live", due:"TBD", status:"open" },
     ],
   },
   {
-    id: 6,
-    date: "2026-05-20",
+    id: 6, date: "2026-05-20",
     from: "Heat Wave Culture <marketing@heatwaveculture.com>",
     to: "Scotti Bros Asia <regis@scottibroasia.com>",
     subject: "Master Marketing & Promotional Plan – Shakira China Tour 2026",
-    category: "Marketing",
-    summary: "3-phase marketing framework submitted. Phase 1 (Buzz): Weibo hashtags, NetEase Cloud Music banner takeovers. Phase 2 (On-Sale): Douyin viral trends, Xiaohongshu, exclusive artist ID video on Damai/Maoyan & Ticketmaster, pre-sale window. Phase 3 (Run-Up): SMG billboards & radio, geo-fenced ads, travel-hub integrations. Budget: 35% Douyin/Weibo/Red Note, 25% SMG Outdoor, 15% NetEase, 15% International, 10% Ticketing. P&L target: break even within 72hrs of on-sale.",
-    tags: ["Marketing", "Digital", "SMG"],
+    subjectZh: "主营销推广方案 – Shakira中国巡演2026",
+    category: "Marketing", categoryZh: "市场营销",
+    summary: "3-phase marketing framework. Phase 1: Weibo hashtags, NetEase banners. Phase 2: Douyin viral trends, Xiaohongshu, artist ID video on Damai/Maoyan, pre-sale window. Phase 3: SMG billboards & radio, geo-fenced ads, travel-hub integrations. Budget: 35% Douyin/Weibo, 25% SMG Outdoor, 15% NetEase, 15% International, 10% Ticketing. Break-even target: 72hrs of on-sale.",
+    summaryZh: "三阶段营销框架。第一阶段：微博话题，网易云音乐横幅。第二阶段：抖音病毒式趋势，小红书，艺人视频上大麦/猫眼，预售窗口。第三阶段：SMG户外广告和广播，地理围栏广告，交通枢纽整合。预算：35%抖音/微博，25%SMG户外，15%网易，15%国际，10%票务。盈亏平衡目标：开票后72小时内。",
+    tags: ["Marketing","Digital","SMG"],
     actionItems: [
-      { id: "a14", text: "Lock specific line-item dollar budget amounts for each phase", owner: "Heat Wave Culture / Scotti Bros Asia", due: "TBD", status: "open" },
-      { id: "a15", text: "Obtain artist ID video recording from Shakira for Phase 2 on-sale push", owner: "WME / Shakira Team", due: "TBD", status: "open" },
-      { id: "a16", text: "Activate Weibo verified account and official hashtags (Phase 1)", owner: "Heat Wave Culture", due: "TBD", status: "open" },
-      { id: "a17", text: "Coordinate SMG billboard and Dragon TV broadcast buy (Phase 3)", owner: "SMG / Heat Wave Culture", due: "TBD", status: "open" },
+      { id:"a14", text:"Lock specific line-item dollar budget amounts for each phase", textZh:"锁定各阶段具体预算金额", owner:"Heat Wave Culture / Scotti Bros Asia", due:"TBD", status:"open" },
+      { id:"a15", text:"Obtain artist ID video from Shakira for Phase 2 on-sale push", textZh:"获取Shakira艺人ID视频用于第二阶段开票推广", owner:"WME / Shakira Team", due:"TBD", status:"open" },
+      { id:"a16", text:"Activate Weibo verified account and official hashtags", textZh:"激活微博认证账号和官方话题", owner:"Heat Wave Culture", due:"TBD", status:"open" },
+      { id:"a17", text:"Coordinate SMG billboard and Dragon TV broadcast buy", textZh:"协调SMG户外广告和东方卫视广播购买", owner:"SMG / Heat Wave Culture", due:"TBD", status:"open" },
+    ],
+  },
+  {
+    id: 7, date: "2026-06-10",
+    from: "Scotti Bros Asia Ops <ops@scottibroasia.com>",
+    to: "Regis Kwong <regis@scottibroasia.com>",
+    subject: "Binder Fund Transfer Timeline – Mainland China to US (25% Deposit)",
+    subjectZh: "保证金划转时间线 – 中国大陆至美国（25%定金）",
+    category: "Timeline", categoryZh: "时间线",
+    summary: "Four-step regulatory workflow for outbound binder fund remittance from China to WME US. CRITICAL DEPENDENCY: Signed Artist Consent Letter from WME/Shakira required before any step can proceed. Step 1: Internal approvals & document gathering (3-5 biz days). Step 2: Shanghai Tax Bureau evaluation & 16% withholding tax settlement (5-7 biz days). Step 3: SAFE registration & cross-border capital flow filing (4-6 biz days). Step 4: Commercial bank AML review, RMB→USD conversion & wire to WME escrow (2-3 biz days). Total: 14–21 business days minimum.",
+    summaryZh: "从中国向WME美国账户汇出保证金的四步监管流程。关键依赖：必须先收到WME/Shakira签署的艺人同意函，否则任何步骤均无法推进。第一步：内部审批和文件收集（3-5个工作日）。第二步：上海税务局评估和16%预扣税结算（5-7个工作日）。第三步：外汇管理局（SAFE）登记和跨境资本流动申报（4-6个工作日）。第四步：商业银行反洗钱审查，人民币→美元兑换及电汇至WME托管账户（2-3个工作日）。总计：最少14-21个工作日。",
+    tags: ["SAFE","Tax Bureau","Wire Transfer","RMB→USD"],
+    actionItems: [
+      { id:"t1", text:"[STEP 1 — BLOCKER] Obtain signed Artist Consent Letter from WME/Shakira — required to unlock entire wire workflow", textZh:"【第一步 — 关键阻碍】获取WME/Shakira签署的艺人同意函——解锁全部汇款流程的前提", owner:"WME / Shakira Team", due:"URGENT", status:"blocked" },
+      { id:"t2", text:"[STEP 1] Secure board/executive approval signatures from Scotti Bros Asia, SMG, and Jiushi Group", textZh:"【第一步】获取斯科蒂兄弟亚洲、SMG和久事集团的董事会/高管批准签字", owner:"Scotti Bros Asia / SMG / Jiushi", due:"3–5 biz days after consent letter", status:"open" },
+      { id:"t3", text:"[STEP 1] Finalize exact 25% binder fund financial requisition amount", textZh:"【第一步】确定25%保证金的精确金额", owner:"Scotti Bros Asia Finance", due:"3–5 biz days", status:"open" },
+      { id:"t4", text:"[STEP 2] Submit transaction profile to Shanghai Tax Bureau with binder letter + consent letter", textZh:"【第二步】向上海税务局提交交易档案，附保证金函和同意函", owner:"Shanghai Magic Live / Jiushi", due:"5–7 biz days after Step 1", status:"open" },
+      { id:"t5", text:"[STEP 2] Pay 16% withholding tax and obtain official Tax Clearance Certificate", textZh:"【第二步】缴纳16%预扣税并获取税务清缴证明", owner:"Scotti Bros Asia Finance", due:"Within Step 2 window", status:"open" },
+      { id:"t6", text:"[STEP 3] File outbound remittance application with SAFE for cross-border capital flow registration", textZh:"【第三步】向外汇管理局提交境外汇款申请，办理跨境资本流动登记", owner:"Jiushi Group / Legal Counsel", due:"4–6 biz days after Step 2", status:"open" },
+      { id:"t7", text:"[STEP 3] Obtain official SAFE Registration/Filing Letter", textZh:"【第三步】获取外汇管理局官方登记/备案函", owner:"Jiushi Group", due:"Within Step 3 window", status:"open" },
+      { id:"t8", text:"[STEP 4] Present full compliance package to commercial bank (SAFE letter + Tax Certificate + WME wire instructions)", textZh:"【第四步】向商业银行提交完整合规材料（SAFE函+税务证明+WME电汇指令）", owner:"Scotti Bros Asia / Jiushi", due:"2–3 biz days after Step 3", status:"open" },
+      { id:"t9", text:"[STEP 4] Bank executes RMB→USD conversion and wires funds to WME offshore escrow account", textZh:"【第四步】银行执行人民币→美元兑换并将资金电汇至WME境外托管账户", owner:"Commercial Bank / Scotti Bros Asia", due:"Within Step 4 window", status:"open" },
+      { id:"t10", text:"Confirm WME receipt of binder funds and obtain written acknowledgment", textZh:"确认WME收到保证金并获取书面确认", owner:"WME / Regis Kwong", due:"Upon wire completion", status:"open" },
     ],
   },
 ];
 
-const CATEGORIES = ["All","Offer / Deal","Legal / Binder","Due Diligence","Venue / Consent","Marketing","Logistics","Payment","Regulatory"];
 const STATUS_OPTIONS = ["open","in-progress","done","blocked"];
-
 const STATUS_STYLES = {
-  open:         { background:"#3a1010", color:"#f87171", border:"1px solid #7a2020" },
-  "in-progress":{ background:"#3a2e00", color:"#fbbf24", border:"1px solid #7a5c00" },
-  done:         { background:"#0a2a10", color:"#4ade80", border:"1px solid #1a5a20" },
-  blocked:      { background:"#3a1a00", color:"#fb923c", border:"1px solid #7a3a00" },
+  open:          { background:"#3a1010", color:"#f87171", border:"1px solid #7a2020" },
+  "in-progress": { background:"#3a2e00", color:"#fbbf24", border:"1px solid #7a5c00" },
+  done:          { background:"#0a2a10", color:"#4ade80", border:"1px solid #1a5a20" },
+  blocked:       { background:"#3a1a00", color:"#fb923c", border:"1px solid #7a3a00" },
 };
-
-const STATUS_LABEL_COLORS = {
-  open: "#f87171", "in-progress": "#fbbf24", done: "#4ade80", blocked: "#fb923c"
-};
+const STATUS_LABEL_COLORS = { open:"#f87171","in-progress":"#fbbf24",done:"#4ade80",blocked:"#fb923c" };
 
 function StatusSelect({ status, onChange }) {
   return (
-    <select
-      value={status}
-      onChange={e => onChange(e.target.value)}
-      style={{
-        ...STATUS_STYLES[status],
-        fontSize: 11, padding: "3px 8px", borderRadius: 5,
-        cursor: "pointer", fontWeight: 700, textTransform: "uppercase",
-        letterSpacing: "0.05em", appearance: "none", WebkitAppearance: "none",
-      }}
-    >
+    <select value={status} onChange={e => onChange(e.target.value)}
+      style={{ ...STATUS_STYLES[status], fontSize:11, padding:"3px 8px", borderRadius:5,
+        cursor:"pointer", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.05em",
+        appearance:"none", WebkitAppearance:"none", minWidth:90, textAlign:"center" }}>
       {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
     </select>
   );
 }
 
+function AddActionForm({ emailId, onSave, onCancel, lang }) {
+  const t = T[lang];
+  const [text, setText] = useState("");
+  const [textZh, setTextZh] = useState("");
+  const [owner, setOwner] = useState("");
+  const [due, setDue] = useState("");
+  const inp = { background:"#0a0a0f", border:"1px solid #2a2a18", borderRadius:5, padding:"7px 10px", color:"#e8e6e0", fontSize:12, width:"100%" };
+  return (
+    <div style={{ background:"#0d0d08", border:"1px dashed #3a3a20", borderRadius:8, padding:"12px 14px", marginTop:8 }} className="fade-in">
+      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+        <input style={inp} placeholder={t.actionPlaceholder} value={text} onChange={e => setText(e.target.value)} />
+        <input style={inp} placeholder="中文行动项描述（可选）" value={textZh} onChange={e => setTextZh(e.target.value)} />
+        <div style={{ display:"flex", gap:8 }}>
+          <input style={{ ...inp, flex:1 }} placeholder={t.ownerPlaceholder} value={owner} onChange={e => setOwner(e.target.value)} />
+          <input style={{ ...inp, flex:1 }} placeholder={t.duePlaceholder} value={due} onChange={e => setDue(e.target.value)} />
+        </div>
+        <div style={{ display:"flex", gap:8 }}>
+          <button onClick={() => { if(text.trim()) onSave({ text, textZh: textZh||text, owner: owner||"—", due: due||"TBD", status:"open" }); }}
+            style={{ padding:"6px 16px", borderRadius:5, background:"#c9a227", color:"#0a0a0f", border:"none", fontWeight:700, fontSize:12, cursor:"pointer" }}>
+            {t.save}
+          </button>
+          <button onClick={onCancel}
+            style={{ padding:"6px 16px", borderRadius:5, background:"#1a1a12", color:"#7a6a50", border:"1px solid #2a2a18", fontWeight:600, fontSize:12, cursor:"pointer" }}>
+            {t.cancel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [emails, setEmails] = useState(SEED_EMAILS);
+  const [lang, setLang] = useState("en");
   const [activeCategory, setActiveCategory] = useState("All");
   const [expandedEmail, setExpandedEmail] = useState(null);
+  const [addingActionTo, setAddingActionTo] = useState(null);
   const [view, setView] = useState("emails");
   const [aiInput, setAiInput] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
@@ -160,153 +290,156 @@ function App() {
   const [parseError, setParseError] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [showKeyInput, setShowKeyInput] = useState(false);
+  const t = T[lang];
+  const isZh = lang === "zh";
 
-  const filtered = activeCategory === "All" ? emails : emails.filter(e => e.category === activeCategory);
-  const allActions = emails.flatMap(e => e.actionItems.map(a => ({ ...a, emailId: e.id, emailSubject: e.subject, emailDate: e.date })));
-  const openActions = allActions.filter(a => a.status === "open").length;
-  const doneActions = allActions.filter(a => a.status === "done").length;
-  const blockedActions = allActions.filter(a => a.status === "blocked").length;
-  const inProgressActions = allActions.filter(a => a.status === "in-progress").length;
+  const catMap = { "All":"全部","Offer / Deal":"报价/协议","Legal / Binder":"法律/保证金","Due Diligence":"尽职调查","Venue / Consent":"场地/同意函","Marketing":"市场营销","Logistics":"物流","Payment":"付款","Regulatory":"法规","Timeline":"时间线" };
+
+  const CATS_EN = ["All","Offer / Deal","Legal / Binder","Due Diligence","Venue / Consent","Marketing","Logistics","Payment","Regulatory","Timeline"];
+
+  const filtered = activeCategory === "All" ? emails : emails.filter(e => e.category === (isZh ? Object.keys(catMap).find(k=>catMap[k]===activeCategory)||activeCategory : activeCategory));
+  const allActions = emails.flatMap(e => e.actionItems.map(a => ({ ...a, emailId:e.id, emailSubject: isZh ? (e.subjectZh||e.subject) : e.subject })));
+  const openA = allActions.filter(a=>a.status==="open").length;
+  const doneA = allActions.filter(a=>a.status==="done").length;
+  const blockedA = allActions.filter(a=>a.status==="blocked").length;
+  const inProgA = allActions.filter(a=>a.status==="in-progress").length;
 
   function updateActionStatus(emailId, actionId, newStatus) {
-    setEmails(prev => prev.map(e =>
-      e.id === emailId
-        ? { ...e, actionItems: e.actionItems.map(a => a.id === actionId ? { ...a, status: newStatus } : a) }
-        : e
-    ));
+    setEmails(prev => prev.map(e => e.id===emailId ? { ...e, actionItems: e.actionItems.map(a => a.id===actionId ? { ...a, status:newStatus } : a) } : e));
+  }
+
+  function saveNewAction(emailId, actionData) {
+    const newId = `m-${Date.now()}`;
+    setEmails(prev => prev.map(e => e.id===emailId ? { ...e, actionItems: [...e.actionItems, { ...actionData, id:newId }] } : e));
+    setAddingActionTo(null);
   }
 
   async function callAPI(messages, system) {
-    const headers = { "Content-Type": "application/json" };
+    const headers = { "Content-Type":"application/json" };
     if (apiKey) headers["x-api-key"] = apiKey;
     const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, system, messages }),
+      method:"POST", headers,
+      body: JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:1000, system, messages }),
     });
     return res.json();
   }
 
   async function parseEmailWithAI() {
     if (!newEmail.rawText.trim()) return;
-    setParseLoading(true);
-    setParseError("");
+    setParseLoading(true); setParseError("");
     try {
       const data = await callAPI(
-        [{ role: "user", content: `Email subject: ${newEmail.subject}\n\nEmail body:\n${newEmail.rawText}` }],
+        [{ role:"user", content:`Email subject: ${newEmail.subject}\n\nEmail body:\n${newEmail.rawText}` }],
         `You are an assistant for the Shakira 2026 China Tour operations team. Extract structured data and return ONLY valid JSON (no markdown, no backticks):
-{"summary":"2-3 sentence summary","category":"one of: Offer / Deal | Legal / Binder | Due Diligence | Venue / Consent | Marketing | Logistics | Payment | Regulatory","tags":["3-5 short tags"],"actionItems":[{"text":"action required","owner":"who is responsible","due":"deadline or TBD","status":"open"}]}`
+{"summary":"2-3 sentence summary in English","summaryZh":"2-3句中文摘要","category":"one of: Offer / Deal | Legal / Binder | Due Diligence | Venue / Consent | Marketing | Logistics | Payment | Regulatory | Timeline","categoryZh":"对应中文类别","tags":["3-5 short tags"],"actionItems":[{"text":"action in English","textZh":"中文行动项","owner":"responsible party","due":"deadline or TBD","status":"open"}]}`
       );
-      const text = (data.content || []).map(b => b.text || "").join("");
-      const clean = text.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(clean);
+      const text = (data.content||[]).map(b=>b.text||"").join("");
+      const parsed = JSON.parse(text.replace(/```json|```/g,"").trim());
       const newId = Date.now();
       setEmails(prev => [...prev, {
-        id: newId,
-        date: newEmail.date || new Date().toISOString().split("T")[0],
-        from: newEmail.from, to: newEmail.to, subject: newEmail.subject,
-        category: parsed.category || "Offer / Deal",
-        summary: parsed.summary, tags: parsed.tags || [],
-        actionItems: (parsed.actionItems || []).map((a, i) => ({ ...a, id: `ai-${newId}-${i}` })),
+        id:newId, date:newEmail.date||new Date().toISOString().split("T")[0],
+        from:newEmail.from, to:newEmail.to, subject:newEmail.subject, subjectZh:newEmail.subject,
+        category:parsed.category||"Offer / Deal", categoryZh:parsed.categoryZh||"",
+        summary:parsed.summary, summaryZh:parsed.summaryZh||parsed.summary,
+        tags:parsed.tags||[],
+        actionItems:(parsed.actionItems||[]).map((a,i)=>({ ...a, id:`ai-${newId}-${i}` })),
       }]);
       setNewEmail({ date:"", from:"", to:"", subject:"", rawText:"" });
       setView("emails");
-    } catch(err) {
-      setParseError("Could not parse response. Check your API key or try again.");
-    }
+    } catch(err) { setParseError("Could not parse response. Check your API key or try again."); }
     setParseLoading(false);
   }
 
   async function askAI() {
     if (!aiInput.trim()) return;
-    setAiLoading(true);
-    setAiResult(null);
-    const context = JSON.stringify(emails.map(e => ({
-      id: e.id, date: e.date, subject: e.subject, category: e.category,
-      summary: e.summary, actionItems: e.actionItems
-    })));
+    setAiLoading(true); setAiResult(null);
+    const context = JSON.stringify(emails.map(e => ({ id:e.id, date:e.date, subject:e.subject, category:e.category, summary:e.summary, actionItems:e.actionItems })));
     try {
       const data = await callAPI(
-        [{ role: "user", content: aiInput }],
-        `You are the operations analyst for the Shakira 2026 China Tour. Answer concisely and helpfully. Current tracker data: ${context}`
+        [{ role:"user", content:aiInput }],
+        `You are the operations analyst for the Shakira 2026 China Tour. Answer concisely. Current tracker: ${context}`
       );
-      setAiResult((data.content || []).map(b => b.text || "").join("") || "No response.");
-    } catch(err) {
-      setAiResult("Error reaching AI. Please check your API key.");
-    }
-    setAiLoading(false);
-    setAiInput("");
+      setAiResult((data.content||[]).map(b=>b.text||"").join("")||"No response.");
+    } catch(err) { setAiResult("Error. Check your API key."); }
+    setAiLoading(false); setAiInput("");
   }
 
   const S = {
-    page: { maxWidth: 1100, margin: "0 auto", padding: "0 20px" },
-    header: { background: "linear-gradient(135deg,#1a0a00 0%,#0a0a0f 60%)", borderBottom: "1px solid #2a1a00", marginBottom: 0 },
-    headerInner: { maxWidth: 1100, margin: "0 auto", padding: "18px 20px 0" },
-    nav: { display: "flex", gap: 8, margin: "16px 0" },
-    navBtn: (active) => ({
-      padding: "7px 16px", borderRadius: 6, fontSize: 13, fontWeight: 600,
-      cursor: "pointer", border: "none",
-      background: active ? "#c9a227" : "#1a1a12",
-      color: active ? "#0a0a0f" : "#9a8a6a",
-    }),
-    card: { background: "#0f0f0a", border: "1px solid #22220e", borderRadius: 10, overflow: "hidden", marginBottom: 10 },
-    label: { fontSize: 11, color: "#7a6a50", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, marginBottom: 4, display: "block" },
-    input: { background: "#0f0f0a", border: "1px solid #2a2a18", borderRadius: 6, padding: "9px 12px", color: "#e8e6e0", fontSize: 13, width: "100%" },
-    tag: { fontSize: 10, padding: "2px 8px", borderRadius: 10, background: "#1e1e10", border: "1px solid #3a3a20", color: "#9a8a60", display:"inline-block" },
-    statBox: { background: "#12120a", border: "1px solid #2a2a18", borderRadius: 8, padding: "8px 16px", minWidth: 80 },
-    filterBtn: (active) => ({
-      padding: "4px 12px", borderRadius: 20, fontSize: 11, fontWeight: 600, cursor: "pointer",
-      border: active ? "1px solid #c9a227" : "1px solid #2a2a18",
-      background: active ? "#c9a22720" : "#12120a",
-      color: active ? "#c9a227" : "#7a6a50",
-    }),
+    page: { maxWidth:1100, margin:"0 auto", padding:"0 20px" },
+    card: { background:"#0f0f0a", border:"1px solid #22220e", borderRadius:10, overflow:"hidden", marginBottom:10 },
+    label: { fontSize:11, color:"#7a6a50", textTransform:"uppercase", letterSpacing:"0.1em", fontWeight:600, marginBottom:4, display:"block" },
+    input: { background:"#0f0f0a", border:"1px solid #2a2a18", borderRadius:6, padding:"9px 12px", color:"#e8e6e0", fontSize:13, width:"100%" },
+    filterBtn: (active) => ({ padding:"4px 12px", borderRadius:20, fontSize:11, fontWeight:600, cursor:"pointer", border: active?"1px solid #c9a227":"1px solid #2a2a18", background: active?"#c9a22720":"#12120a", color: active?"#c9a227":"#7a6a50" }),
+    navBtn: (active) => ({ padding:"7px 16px", borderRadius:6, fontSize:13, fontWeight:600, cursor:"pointer", border:"none", background: active?"#c9a227":"#1a1a12", color: active?"#0a0a0f":"#9a8a6a" }),
     actionRow: { display:"flex", gap:12, alignItems:"flex-start", background:"#12120a", borderRadius:7, padding:"10px 14px", border:"1px solid #1e1e10", marginBottom:6 },
+    statBox: { background:"#12120a", border:"1px solid #2a2a18", borderRadius:8, padding:"8px 16px", minWidth:80 },
     quickBtn: { fontSize:11, padding:"5px 12px", borderRadius:20, border:"1px solid #2a2a18", background:"#12120a", color:"#7a6a50", cursor:"pointer" },
+    sectionTitle: { fontSize:11, textTransform:"uppercase", letterSpacing:"0.15em", color:"#5a5040", marginBottom:10, fontWeight:700 },
   };
+
+  const getCategoryDisplay = (email) => isZh ? (email.categoryZh||email.category) : email.category;
+  const getSubjectDisplay = (email) => isZh ? (email.subjectZh||email.subject) : email.subject;
+  const getSummaryDisplay = (email) => isZh ? (email.summaryZh||email.summary) : email.summary;
+  const getActionText = (action) => isZh ? (action.textZh||action.text) : action.text;
+  const getStatusLabel = (s) => t.statusLabels[s]||s;
 
   return (
     <div style={{ background:"#0a0a0f", minHeight:"100vh", color:"#e8e6e0" }}>
       {/* HEADER */}
-      <div style={S.header}>
-        <div style={S.headerInner}>
+      <div style={{ background:"linear-gradient(135deg,#1a0a00 0%,#0a0a0f 60%)", borderBottom:"1px solid #2a1a00" }}>
+        <div style={{ maxWidth:1100, margin:"0 auto", padding:"18px 20px 0" }}>
           <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:4 }}>
             <div style={{ width:6, height:32, background:"linear-gradient(180deg,#c9a227,#8b6914)", borderRadius:2 }} />
-            <div>
-              <div style={{ fontSize:10, letterSpacing:"0.2em", color:"#c9a227", textTransform:"uppercase", fontWeight:600 }}>Scotti Bros Asia × WME</div>
-              <h1 style={{ fontSize:20, fontWeight:800, color:"#fff", letterSpacing:"-0.02em" }}>Shakira 2026 China Tour — Operations Tracker</h1>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:10, letterSpacing:"0.2em", color:"#c9a227", textTransform:"uppercase", fontWeight:600 }}>{t.org}</div>
+              <h1 style={{ fontSize:19, fontWeight:800, color:"#fff", letterSpacing:"-0.02em" }}>{t.title}</h1>
             </div>
-            <button onClick={() => setShowKeyInput(!showKeyInput)}
-              style={{ marginLeft:"auto", fontSize:11, padding:"5px 12px", borderRadius:6, border:"1px solid #2a2a18", background:"#12120a", color:"#7a6a50", cursor:"pointer" }}>
-              {apiKey ? "🔑 Key Set" : "🔑 API Key"}
-            </button>
+            <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+              {/* Language Toggle */}
+              <div style={{ display:"flex", borderRadius:6, overflow:"hidden", border:"1px solid #2a2a18" }}>
+                {["en","zh"].map(l => (
+                  <button key={l} onClick={() => { setLang(l); setActiveCategory(l==="en"?"All":"全部"); }}
+                    style={{ padding:"5px 12px", fontSize:12, fontWeight:700, cursor:"pointer", border:"none",
+                      background: lang===l?"#c9a227":"#12120a", color: lang===l?"#0a0a0f":"#7a6a50" }}>
+                    {l==="en"?"EN":"中文"}
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => setShowKeyInput(!showKeyInput)}
+                style={{ fontSize:11, padding:"5px 12px", borderRadius:6, border:"1px solid #2a2a18", background:"#12120a", color: apiKey?"#4ade80":"#7a6a50", cursor:"pointer" }}>
+                {apiKey ? t.apiKeySet : t.apiKeyBtn}
+              </button>
+            </div>
           </div>
-          <div style={{ fontSize:11, color:"#7a6a50", paddingLeft:20, paddingBottom:8 }}>Shanghai Dec 12–13 · Guangzhou Dec 19–20 · $20M Gross Guarantee</div>
+          <div style={{ fontSize:11, color:"#7a6a50", paddingLeft:20, paddingBottom:8 }}>{t.subtitle}</div>
 
           {showKeyInput && (
-            <div style={{ background:"#12120a", border:"1px solid #2a2a18", borderRadius:8, padding:12, marginBottom:10 }}>
-              <div style={{ fontSize:11, color:"#7a6a50", marginBottom:6 }}>Enter your Anthropic API key to enable AI features (Parse Email & Ask AI):</div>
+            <div style={{ background:"#12120a", border:"1px solid #2a2a18", borderRadius:8, padding:12, marginBottom:10 }} className="fade-in">
+              <div style={{ fontSize:11, color:"#7a6a50", marginBottom:6 }}>{t.apiKeyLabel}</div>
               <div style={{ display:"flex", gap:8 }}>
-                <input type="password" placeholder="sk-ant-..." value={apiKey} onChange={e => setApiKey(e.target.value)}
+                <input type="password" placeholder="sk-ant-..." value={apiKey} onChange={e=>setApiKey(e.target.value)}
                   style={{ ...S.input, flex:1 }} />
                 <button onClick={() => setShowKeyInput(false)}
-                  style={{ padding:"9px 14px", borderRadius:6, background:"#c9a227", color:"#0a0a0f", border:"none", fontWeight:700, cursor:"pointer", fontSize:13 }}>Save</button>
+                  style={{ padding:"9px 14px", borderRadius:6, background:"#c9a227", color:"#0a0a0f", border:"none", fontWeight:700, cursor:"pointer", fontSize:13 }}>
+                  {t.apiKeySave}
+                </button>
               </div>
             </div>
           )}
 
           {/* Stats */}
-          <div style={{ display:"flex", gap:14, flexWrap:"wrap", paddingBottom:14 }}>
+          <div style={{ display:"flex", gap:12, flexWrap:"wrap", paddingBottom:14 }}>
             {[
-              { label:"Emails", value: emails.length, color:"#c9a227" },
-              { label:"Total Actions", value: allActions.length, color:"#e8e6e0" },
-              { label:"Open", value: openActions, color:"#f87171" },
-              { label:"In Progress", value: inProgressActions, color:"#fbbf24" },
-              { label:"Blocked", value: blockedActions, color:"#fb923c" },
-              { label:"Done", value: doneActions, color:"#4ade80" },
+              { label:t.stats[0], value:emails.length, color:"#c9a227" },
+              { label:t.stats[1], value:allActions.length, color:"#e8e6e0" },
+              { label:t.stats[2], value:openA, color:"#f87171" },
+              { label:t.stats[3], value:inProgA, color:"#fbbf24" },
+              { label:t.stats[4], value:blockedA, color:"#fb923c" },
+              { label:t.stats[5], value:doneA, color:"#4ade80" },
             ].map(s => (
               <div key={s.label} style={S.statBox}>
                 <div style={{ fontSize:20, fontWeight:800, color:s.color }}>{s.value}</div>
-                <div style={{ fontSize:10, color:"#7a6a50", textTransform:"uppercase", letterSpacing:"0.1em" }}>{s.label}</div>
+                <div style={{ fontSize:10, color:"#7a6a50", textTransform:"uppercase", letterSpacing:"0.08em" }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -316,58 +449,169 @@ function App() {
       {/* MAIN */}
       <div style={S.page}>
         {/* Nav */}
-        <div style={S.nav}>
-          {[["emails","📧 Emails"],["actions","✅ Actions"],["add","＋ Log Email"],["ai","✦ Ask AI"]].map(([k,l]) => (
-            <button key={k} onClick={() => setView(k)} style={S.navBtn(view === k)}>{l}</button>
+        <div style={{ display:"flex", gap:8, margin:"16px 0" }}>
+          {t.tabs.map((label, i) => (
+            <button key={t.tabKeys[i]} onClick={() => setView(t.tabKeys[i])} style={S.navBtn(view===t.tabKeys[i])}>{label}</button>
           ))}
         </div>
 
+        {/* PROJECT SUMMARY */}
+        {view === "summary" && (
+          <div style={{ maxWidth:800 }} className="fade-in">
+            <div style={{ fontSize:18, fontWeight:800, color:"#c9a227", marginBottom:20 }}>{t.summaryTitle}</div>
+
+            {/* Deal Overview */}
+            <div style={{ ...S.card, padding:"18px 20px", marginBottom:16 }}>
+              <div style={{ ...S.sectionTitle, marginBottom:14 }}>🎤 {isZh?"演出概要":"Tour Overview"}</div>
+              {[
+                [isZh?"艺人":"Artist", "Shakira Isabel Mebarak Ripoll"],
+                [isZh?"巡演名称":"Tour Name", "Las Mujeres Ya No Lloran — China Tour"],
+                [isZh?"上海演出":"Shanghai", "Dec 12–13, 2026 · Shanghai Stadium · 2 Firm + 1 Option"],
+                [isZh?"广州演出":"Guangzhou", "Dec 19–20, 2026 · Guangzhou Nansha GBA Center · 2 Firm + 1 Option"],
+                [isZh?"总保证金":"Gross Guarantee", "$20,000,000 USD (4 Firm Shows × $5M)"],
+                [isZh?"最大潜在收益":"Total Potential Yield", "$30,000,000 USD (incl. 2 optional shows)"],
+                [isZh?"周边商品分成":"Merch Split", "90% Artist / 10% Promoter"],
+                [isZh?"中国税率":"China Tax", "16% (VAT + withholding) — deducted at escrow"],
+              ].map(([k,v]) => (
+                <div key={k} style={{ display:"flex", gap:12, padding:"7px 0", borderBottom:"1px solid #1a1a0a" }}>
+                  <div style={{ fontSize:12, color:"#7a6a50", minWidth:140, fontWeight:600 }}>{k}</div>
+                  <div style={{ fontSize:12, color:"#d0c8b0" }}>{v}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Payment Schedule */}
+            <div style={{ ...S.card, padding:"18px 20px", marginBottom:16 }}>
+              <div style={{ ...S.sectionTitle, marginBottom:14 }}>💰 {isZh?"付款时间表":"Payment Schedule"}</div>
+              {[
+                [isZh?"定金（签约时）":"Deposit (on signing)", "$10,000,000 USD", isZh?"签署长格式合同时立即汇款":"Wire immediately upon execution of Long-Form Agreement"],
+                [isZh?"尾款（演出前30天）":"Balance (30 days pre-show)", "$10,000,000 USD", isZh?"首场演出前30天汇至WME托管账户":"Due 30 days before first performance to WME escrow"],
+              ].map(([k,v,n]) => (
+                <div key={k} style={{ background:"#12120a", borderRadius:8, padding:"12px 14px", marginBottom:8 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+                    <span style={{ fontSize:13, fontWeight:700, color:"#e8e6e0" }}>{k}</span>
+                    <span style={{ fontSize:16, fontWeight:800, color:"#c9a227" }}>{v}</span>
+                  </div>
+                  <div style={{ fontSize:11, color:"#5a5040" }}>{n}</div>
+                </div>
+              ))}
+              <div style={{ fontSize:11, color:"#5a5040", marginTop:8, padding:"8px 12px", background:"#0a0a08", borderRadius:6, border:"1px solid #1a1a0a" }}>
+                ⚠️ {isZh?"保证金转账预计需14-21个工作日（4个监管步骤）。关键阻碍：须先收到已签署的艺人同意函。":"Binder fund transfer requires 14–21 business days across 4 regulatory steps. Critical blocker: signed Artist Consent Letter must be received first."}
+              </div>
+            </div>
+
+            {/* Parties */}
+            <div style={{ ...S.card, padding:"18px 20px", marginBottom:16 }}>
+              <div style={{ ...S.sectionTitle, marginBottom:14 }}>🤝 {isZh?"交易各方":"Deal Parties"}</div>
+              {[
+                ["Scotti Bros Asia LLC", isZh?"主办方 (Anthony Scotti · 706 N Beverly Dr, Beverly Hills CA)":"Lead Promoter (Anthony Scotti · 706 N Beverly Dr, Beverly Hills CA)"],
+                ["Shanghai Jiushi Entertainments", isZh?"联合主办 / 国有场馆所有者 (Xia Qing)":"Co-Promoter / State-Owned Venue Owner (Xia Qing)"],
+                ["Shanghai Media Group (SMG)", isZh?"媒体与市场合作伙伴":"Media & Marketing Partner"],
+                ["Shanghai Magic Live Entertainment", isZh?"巡演执行 (Gao Hong Qi)":"Tour Execution (Gao Hong Qi)"],
+                ["Heat Wave Culture (Shenzhen)", isZh?"华南联合体 / 广州执行":"Southern China Consortium / Guangzhou Execution"],
+                ["WME (London)", isZh?"艺人代理机构 (Rob Markus)":"Artist Agency (Rob Markus)"],
+              ].map(([name, role]) => (
+                <div key={name} style={{ display:"flex", gap:12, padding:"7px 0", borderBottom:"1px solid #1a1a0a" }}>
+                  <div style={{ fontSize:12, color:"#c9a227", minWidth:200, fontWeight:600 }}>{name}</div>
+                  <div style={{ fontSize:12, color:"#8a7a60" }}>{role}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Wire Timeline Summary */}
+            <div style={{ ...S.card, padding:"18px 20px", marginBottom:16 }}>
+              <div style={{ ...S.sectionTitle, marginBottom:14 }}>🏦 {isZh?"资金转账时间线（中国→美国）":"Binder Fund Wire Timeline (China → US)"}</div>
+              {[
+                ["Step 1", isZh?"内部审批 + 文件收集":"Internal Approvals + Document Gathering", "3–5 biz days", isZh?"关键依赖：已签署艺人同意函":"CRITICAL: Signed Artist Consent Letter required"],
+                ["Step 2", isZh?"上海税务局评估 + 16%预扣税":"Shanghai Tax Bureau + 16% Withholding", "5–7 biz days", isZh?"获取税务清缴证明":"Obtain Tax Clearance Certificate"],
+                ["Step 3", isZh?"外汇管理局登记 + 跨境申报":"SAFE Registration + Cross-Border Filing", "4–6 biz days", isZh?"获取SAFE备案函":"Obtain SAFE Registration Letter"],
+                ["Step 4", isZh?"商业银行 — 反洗钱审查 + 人民币→美元电汇":"Commercial Bank — AML Review + RMB→USD Wire", "2–3 biz days", isZh?"汇至WME托管账户":"Wire to WME escrow account"],
+              ].map(([step, desc, dur, note]) => (
+                <div key={step} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom:"1px solid #1a1a0a" }}>
+                  <div style={{ fontSize:11, fontWeight:800, color:"#c9a227", minWidth:52, marginTop:1 }}>{step}</div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:13, color:"#d0c8b0", fontWeight:600 }}>{desc}</div>
+                    <div style={{ fontSize:11, color:"#5a5040", marginTop:2 }}>{note}</div>
+                  </div>
+                  <div style={{ fontSize:11, color:"#fbbf24", fontWeight:700, whiteSpace:"nowrap" }}>{dur}</div>
+                </div>
+              ))}
+              <div style={{ marginTop:12, padding:"10px 14px", background:"#1a1000", borderRadius:8, border:"1px solid #3a2a00" }}>
+                <span style={{ fontSize:12, color:"#fbbf24", fontWeight:700 }}>
+                  {isZh?"总计预计时间：14–21个工作日（最少3个日历周）":"Total Estimated: 14–21 Business Days (min. 3 calendar weeks)"}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ fontSize:11, color:"#3a3028", marginTop:8 }}>{t.confidential}</div>
+          </div>
+        )}
+
         {/* EMAILS */}
         {view === "emails" && (
-          <div>
+          <div className="fade-in">
             <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:14 }}>
-              {CATEGORIES.map(c => (
-                <button key={c} onClick={() => setActiveCategory(c)} style={S.filterBtn(activeCategory === c)}>{c}</button>
-              ))}
+              {CATS_EN.map(c => {
+                const display = isZh ? catMap[c] : c;
+                const active = isZh ? activeCategory === catMap[c] : activeCategory === c;
+                return (
+                  <button key={c} onClick={() => setActiveCategory(isZh ? catMap[c] : c)} style={S.filterBtn(active)}>{display}</button>
+                );
+              })}
             </div>
             {filtered.map(email => (
               <div key={email.id} style={S.card} className="fade-in">
-                <div onClick={() => setExpandedEmail(expandedEmail === email.id ? null : email.id)}
+                <div onClick={() => setExpandedEmail(expandedEmail===email.id ? null : email.id)}
                   style={{ padding:"14px 18px", cursor:"pointer" }}>
                   <div style={{ display:"flex", alignItems:"flex-start", gap:10 }}>
                     <div style={{ flex:1 }}>
                       <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap", marginBottom:4 }}>
-                        <span style={{ fontSize:14, fontWeight:700, color:"#e8e6e0" }}>{email.subject}</span>
-                        <span style={{ fontSize:10, padding:"2px 8px", borderRadius:10, background:"#2a2010", color:"#c9a227", fontWeight:600 }}>{email.category}</span>
+                        <span style={{ fontSize:14, fontWeight:700, color:"#e8e6e0" }}>{getSubjectDisplay(email)}</span>
+                        <span style={{ fontSize:10, padding:"2px 8px", borderRadius:10, background:"#2a2010", color:"#c9a227", fontWeight:600 }}>{getCategoryDisplay(email)}</span>
                       </div>
                       <div style={{ fontSize:11, color:"#5a5040", marginBottom:6 }}>
                         <span style={{ color:"#7a6a50" }}>{email.date}</span> · {email.from}
                       </div>
-                      <div style={{ fontSize:12, color:"#8a7a60", lineHeight:1.6 }}>{email.summary}</div>
+                      <div style={{ fontSize:12, color:"#8a7a60", lineHeight:1.6 }}>{getSummaryDisplay(email)}</div>
                       <div style={{ display:"flex", gap:6, marginTop:8, flexWrap:"wrap", alignItems:"center" }}>
-                        {email.tags.map(t => <span key={t} style={S.tag}>{t}</span>)}
+                        {email.tags.map(tag => (
+                          <span key={tag} style={{ fontSize:10, padding:"2px 8px", borderRadius:10, background:"#1e1e10", border:"1px solid #3a3a20", color:"#9a8a60" }}>{tag}</span>
+                        ))}
                         <span style={{ fontSize:11, marginLeft:"auto", color:"#5a5040" }}>
-                          {email.actionItems.length} action{email.actionItems.length !== 1 ? "s" : ""} · {email.actionItems.filter(a=>a.status==="done").length} done
+                          {email.actionItems.length} {isZh?"项":"action"}{!isZh && email.actionItems.length!==1?"s":""} · {email.actionItems.filter(a=>a.status==="done").length} {isZh?"已完成":"done"}
                         </span>
                       </div>
                     </div>
-                    <span style={{ color:"#5a5040", fontSize:14 }}>{expandedEmail === email.id ? "▲" : "▼"}</span>
+                    <span style={{ color:"#5a5040", fontSize:14 }}>{expandedEmail===email.id?"▲":"▼"}</span>
                   </div>
                 </div>
+
                 {expandedEmail === email.id && (
                   <div style={{ borderTop:"1px solid #1a1a0a", padding:"12px 18px 16px" }} className="fade-in">
-                    <div style={{ fontSize:10, textTransform:"uppercase", letterSpacing:"0.15em", color:"#5a5040", marginBottom:10, fontWeight:700 }}>Action Items</div>
+                    <div style={S.sectionTitle}>{t.actionItems}</div>
                     {email.actionItems.map(action => (
                       <div key={action.id} style={S.actionRow}>
                         <div style={{ flex:1 }}>
-                          <div style={{ fontSize:13, color: action.status==="done" ? "#4a6040" : "#d0c8b0", textDecoration: action.status==="done" ? "line-through" : "none" }}>
-                            {action.text}
+                          <div style={{ fontSize:13, color:action.status==="done"?"#4a6040":"#d0c8b0", textDecoration:action.status==="done"?"line-through":"none" }}>
+                            {getActionText(action)}
                           </div>
                           <div style={{ fontSize:11, color:"#5a5040", marginTop:3 }}>👤 {action.owner} · 📅 {action.due}</div>
                         </div>
                         <StatusSelect status={action.status} onChange={s => updateActionStatus(email.id, action.id, s)} />
                       </div>
                     ))}
+
+                    {addingActionTo === email.id ? (
+                      <AddActionForm emailId={email.id} lang={lang}
+                        onSave={(data) => saveNewAction(email.id, data)}
+                        onCancel={() => setAddingActionTo(null)} />
+                    ) : (
+                      <button onClick={(e) => { e.stopPropagation(); setAddingActionTo(email.id); }}
+                        style={{ marginTop:8, padding:"6px 14px", borderRadius:6, fontSize:12, fontWeight:600,
+                          background:"transparent", border:"1px dashed #3a3a20", color:"#7a6a50", cursor:"pointer" }}>
+                        {t.addAction}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -377,21 +621,23 @@ function App() {
 
         {/* ACTIONS */}
         {view === "actions" && (
-          <div>
-            {["open","in-progress","blocked","done"].map(status => {
+          <div className="fade-in">
+            {["blocked","open","in-progress","done"].map(status => {
               const items = allActions.filter(a => a.status === status);
               if (!items.length) return null;
               return (
                 <div key={status} style={{ marginBottom:24 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
-                    <span style={{ fontSize:11, textTransform:"uppercase", letterSpacing:"0.15em", fontWeight:800, color: STATUS_LABEL_COLORS[status] }}>{status}</span>
+                    <span style={{ fontSize:11, textTransform:"uppercase", letterSpacing:"0.15em", fontWeight:800, color:STATUS_LABEL_COLORS[status] }}>
+                      {getStatusLabel(status)}
+                    </span>
                     <span style={{ fontSize:11, color:"#5a5040" }}>({items.length})</span>
                   </div>
                   {items.map(a => (
                     <div key={a.id} style={{ ...S.actionRow, background:"#0f0f0a", border:"1px solid #1a1a0a" }}>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:13, color: status==="done" ? "#4a6040" : "#d0c8b0", textDecoration: status==="done" ? "line-through" : "none" }}>
-                          {a.text}
+                        <div style={{ fontSize:13, color:status==="done"?"#4a6040":"#d0c8b0", textDecoration:status==="done"?"line-through":"none" }}>
+                          {getActionText(a)}
                         </div>
                         <div style={{ fontSize:11, color:"#5a5040", marginTop:4 }}>
                           👤 {a.owner} · 📅 {a.due} · <span style={{ color:"#7a6a50" }}>📧 {a.emailSubject}</span>
@@ -408,38 +654,38 @@ function App() {
 
         {/* ADD EMAIL */}
         {view === "add" && (
-          <div style={{ maxWidth:700 }}>
+          <div style={{ maxWidth:700 }} className="fade-in">
             <div style={{ fontSize:13, color:"#7a6a50", marginBottom:18 }}>
-              Paste a new email below. AI will auto-extract the summary, category, tags, and action items.
-              {!apiKey && <span style={{ color:"#fb923c" }}> — Add your API key (🔑 top right) to enable AI parsing.</span>}
+              {t.addEmailNote}
+              {!apiKey && <span style={{ color:"#fb923c" }}>{t.apiKeyNote}</span>}
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               {[
-                { key:"date", label:"Date", type:"date" },
-                { key:"from", label:"From", type:"text", placeholder:"Name <email@example.com>" },
-                { key:"to", label:"To", type:"text", placeholder:"Name <email@example.com>" },
-                { key:"subject", label:"Subject", type:"text", placeholder:"Email subject line" },
+                { key:"date", label:t.date, type:"date" },
+                { key:"from", label:t.from, type:"text", placeholder:"Name <email@example.com>" },
+                { key:"to", label:t.to, type:"text", placeholder:"Name <email@example.com>" },
+                { key:"subject", label:t.subject, type:"text", placeholder:"Email subject line" },
               ].map(({ key, label, type, placeholder="" }) => (
                 <div key={key}>
                   <label style={S.label}>{label}</label>
                   <input type={type} placeholder={placeholder} value={newEmail[key]}
-                    onChange={e => setNewEmail(p => ({ ...p, [key]: e.target.value }))}
+                    onChange={e => setNewEmail(p => ({ ...p, [key]:e.target.value }))}
                     style={S.input} />
                 </div>
               ))}
               <div>
-                <label style={S.label}>Email Body</label>
-                <textarea rows={8} placeholder="Paste the full email body here..." value={newEmail.rawText}
-                  onChange={e => setNewEmail(p => ({ ...p, rawText: e.target.value }))}
+                <label style={S.label}>{t.emailBody}</label>
+                <textarea rows={8} placeholder={t.emailBodyPlaceholder} value={newEmail.rawText}
+                  onChange={e => setNewEmail(p => ({ ...p, rawText:e.target.value }))}
                   style={{ ...S.input, resize:"vertical" }} />
               </div>
               {parseError && <div style={{ fontSize:12, color:"#f87171" }}>{parseError}</div>}
               <button onClick={parseEmailWithAI} disabled={parseLoading || !newEmail.rawText.trim()}
                 style={{ padding:"11px 24px", borderRadius:7, fontWeight:700, fontSize:14,
-                  cursor: parseLoading ? "wait" : "pointer",
-                  background: parseLoading ? "#3a3a18" : "#c9a227",
-                  color:"#0a0a0f", border:"none", opacity: !newEmail.rawText.trim() ? 0.5 : 1 }}>
-                {parseLoading ? "Analyzing with AI..." : "✦ Parse & Log Email"}
+                  cursor:parseLoading?"wait":"pointer",
+                  background:parseLoading?"#3a3a18":"#c9a227",
+                  color:"#0a0a0f", border:"none", opacity:!newEmail.rawText.trim()?0.5:1 }}>
+                {parseLoading ? t.parsing : t.parseBtn}
               </button>
             </div>
           </div>
@@ -447,32 +693,32 @@ function App() {
 
         {/* ASK AI */}
         {view === "ai" && (
-          <div style={{ maxWidth:700 }}>
+          <div style={{ maxWidth:700 }} className="fade-in">
             <div style={{ fontSize:13, color:"#7a6a50", marginBottom:14 }}>
-              Ask anything about the tour — payments, open actions, deal structure, next steps.
-              {!apiKey && <span style={{ color:"#fb923c" }}> — Add your API key (🔑 top right) to enable AI.</span>}
+              {t.askNote}
+              {!apiKey && <span style={{ color:"#fb923c" }}>{t.apiKeyNote}</span>}
             </div>
             <div style={{ display:"flex", gap:8, marginBottom:14 }}>
               <input value={aiInput} onChange={e => setAiInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && !e.shiftKey && askAI()}
-                placeholder="e.g. What payments are outstanding? Who still needs to sign?"
+                onKeyDown={e => e.key==="Enter" && !e.shiftKey && askAI()}
+                placeholder={t.quickPrompts[0]}
                 style={{ ...S.input, flex:1 }} />
               <button onClick={askAI} disabled={aiLoading || !aiInput.trim()}
                 style={{ padding:"10px 18px", borderRadius:7, fontWeight:700, fontSize:13,
-                  cursor: aiLoading ? "wait" : "pointer",
-                  background: aiLoading ? "#3a3a18" : "#c9a227",
+                  cursor:aiLoading?"wait":"pointer",
+                  background:aiLoading?"#3a3a18":"#c9a227",
                   color:"#0a0a0f", border:"none" }}>
-                {aiLoading ? "..." : "Ask"}
+                {aiLoading ? t.asking : t.askBtn}
               </button>
             </div>
             <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:18 }}>
-              {["What payments are pending?","What are all open actions?","Who needs to sign what?","Summarize the deal structure","What's blocking progress?"].map(q => (
+              {t.quickPrompts.map(q => (
                 <button key={q} onClick={() => setAiInput(q)} style={S.quickBtn}>{q}</button>
               ))}
             </div>
             {aiResult && (
               <div style={{ background:"#0f0f0a", border:"1px solid #2a2a18", borderRadius:10, padding:"16px 18px", fontSize:13, color:"#c8c0a8", lineHeight:1.7, whiteSpace:"pre-wrap" }} className="fade-in">
-                <div style={{ fontSize:10, color:"#5a5040", textTransform:"uppercase", letterSpacing:"0.15em", marginBottom:10, fontWeight:700 }}>✦ AI Analysis</div>
+                <div style={{ fontSize:10, color:"#5a5040", textTransform:"uppercase", letterSpacing:"0.15em", marginBottom:10, fontWeight:700 }}>{t.aiLabel}</div>
                 {aiResult}
               </div>
             )}
