@@ -111,11 +111,14 @@ const SEED_EMAILS = [
     subject: "RE: Shakira – China Tour Multi-City Best & Final Offer (December 2026)",
     subjectZh: "Shakira – 中国巡演双城最终报价（2026年12月）",
     category: "Offer / Deal", categoryZh: "报价/协议",
-    summary: "Scotti Bros Asia submitted the dual-city BAFO. 4 firm shows (Shanghai Dec 12-13, Guangzhou Dec 19-20) + 2 options. $20M gross guarantee ($5M/show). 50/50 payment: $10M on signing, $10M 30 days pre-show. 100% box office risk with promoter. 90/10 merch split. 16% China tax deducted at escrow. Turnkey production, 25,000kg freight, private air charter included.",
-    summaryZh: "斯科蒂兄弟亚洲提交双城最终报价。4场确定演出（上海12月12-13日，广州12月19-20日）+ 2场可选。2000万美元总保证金（每场500万）。50/50付款：签约付1000万，演出前30天付1000万。100%票房风险由主办方承担。周边商品90/10分成。16%中国税款在托管账户扣除。包含全套制作、25000公斤货运、私人包机。",
+    summary: "Scotti Bros Asia submitted the dual-city BAFO. 4 firm shows (Shanghai Dec 12-13, Guangzhou Dec 19-20) + 2 options. $20M gross guarantee ($5M/show). UPDATED PAYMENT TERMS: 25% ($5M flat) upon binder signing, 25% ($5M) upon contract signing, 50% ($10M) 60 days before first performance. 100% box office risk with promoter. 90/10 merch split. 16% China tax deducted at escrow. Turnkey production, 25,000kg freight, private air charter included.",
+    summaryZh: "斯科蒂兄弟亚洲提交双城最终报价。4场确定演出（上海12月12-13日，广州12月19-20日）+ 2场可选。2000万美元总保证金（每场500万）。【更新付款条款】：25%（500万美元固定）于保证金函签署时支付，25%（500万美元）于合同签署时支付，50%（1000万美元）于首场演出前60天支付。100%票房风险由主办方承担。周边商品90/10分成。16%中国税款在托管账户扣除。包含全套制作、25000公斤货运、私人包机。",
     tags: ["BAFO", "Financial", "Structure"],
     actionItems: [
       { id:"a1", text:"WME to confirm acceptance or rejection of BAFO", textZh:"WME确认接受或拒绝最终报价", owner:"WME / Rob Markus", due:"TBD", status:"open" },
+      { id:"a1b", text:"Wire $5,000,000 (25% binder payment) to WME upon binder signing", textZh:"保证金函签署后汇付500万美元（25%保证金）至WME", owner:"Scotti Bros Asia", due:"Upon binder signing", status:"open" },
+      { id:"a1c", text:"Wire $5,000,000 (25% second payment) to WME upon contract signing", textZh:"合同签署后汇付500万美元（25%第二笔款）至WME", owner:"Scotti Bros Asia", due:"Upon contract signing", status:"open" },
+      { id:"a1d", text:"Wire $10,000,000 (50% final balance) to WME 60 days before first performance (by Oct 13, 2026)", textZh:"首场演出前60天（2026年10月13日前）汇付1000万美元（50%尾款）至WME", owner:"Scotti Bros Asia", due:"60 days pre-show / Oct 13, 2026", status:"open" },
       { id:"a2", text:"Execute Long-Form Agreement upon WME confirmation", textZh:"WME确认后签署长格式合同", owner:"Scotti Bros Asia", due:"TBD", status:"open" },
     ],
   },
@@ -132,7 +135,7 @@ const SEED_EMAILS = [
     actionItems: [
       { id:"a3", text:"Fill all bracketed fields in binder letter (amount, dates, entity)", textZh:"填写保证金函所有括号内容（金额、日期、实体）", owner:"WME LDN", due:"TBD", status:"open" },
       { id:"a4", text:"Scotti Bros Asia to sign and return binder letter", textZh:"斯科蒂兄弟亚洲签署并退回保证金函", owner:"Anthony Scotti", due:"TBD", status:"open" },
-      { id:"a5", text:"Wire binder payment to WME LDN bank account", textZh:"向WME伦敦银行账户汇付保证金", owner:"Scotti Bros Asia", due:"TBD", status:"open" },
+      { id:"a5", text:"Wire $5,000,000 flat binder payment (25%) to WME LDN bank account upon binder signing", textZh:"保证金函签署后向WME伦敦账户汇付500万美元固定保证金（25%）", owner:"Scotti Bros Asia", due:"Upon binder signing", status:"open" },
     ],
   },
   {
@@ -203,16 +206,18 @@ const SEED_EMAILS = [
     id: 7, date: "2026-06-10",
     from: "Scotti Bros Asia Ops <ops@scottibroasia.com>",
     to: "Regis Kwong <regis@scottibroasia.com>",
-    subject: "Binder Fund Transfer Timeline – Mainland China to US (25% Deposit)",
-    subjectZh: "保证金划转时间线 – 中国大陆至美国（25%定金）",
+    subject: "Binder Fund Transfer Timeline – Mainland China to US (Updated 25/25/50 Payment Terms)",
+    subjectZh: "保证金划转时间线 – 中国大陆至美国（更新后25/25/50付款条款）",
     category: "Timeline", categoryZh: "时间线",
-    summary: "Four-step regulatory workflow for outbound binder fund remittance from China to WME US. CRITICAL DEPENDENCY: Signed Artist Consent Letter from WME/Shakira required before any step can proceed. Step 1: Internal approvals & document gathering (3-5 biz days). Step 2: Shanghai Tax Bureau evaluation & 16% withholding tax settlement (5-7 biz days). Step 3: SAFE registration & cross-border capital flow filing (4-6 biz days). Step 4: Commercial bank AML review, RMB→USD conversion & wire to WME escrow (2-3 biz days). Total: 14–21 business days minimum.",
-    summaryZh: "从中国向WME美国账户汇出保证金的四步监管流程。关键依赖：必须先收到WME/Shakira签署的艺人同意函，否则任何步骤均无法推进。第一步：内部审批和文件收集（3-5个工作日）。第二步：上海税务局评估和16%预扣税结算（5-7个工作日）。第三步：外汇管理局（SAFE）登记和跨境资本流动申报（4-6个工作日）。第四步：商业银行反洗钱审查，人民币→美元兑换及电汇至WME托管账户（2-3个工作日）。总计：最少14-21个工作日。",
+    summary: "Four-step regulatory workflow for outbound fund remittance from China to WME US. UPDATED PAYMENT TERMS: Payment 1 — $5M flat (25%) upon binder signing. Payment 2 — $5M (25%) upon contract signing. Payment 3 — $10M (50%) 60 days before first performance (est. Oct 13, 2026). Each payment requires the full 14–21 business day regulatory workflow. CRITICAL DEPENDENCY: Signed Artist Consent Letter required before Payment 1 wire can proceed.",
+    summaryZh: "从中国向WME美国账户汇款的四步监管流程。【更新付款条款】：第一笔——保证金函签署时付500万美元固定金额（25%）；第二笔——合同签署时付500万美元（25%）；第三笔——首场演出前60天付1000万美元（50%，预计2026年10月13日）。每笔款项均需完整的14-21个工作日监管流程。关键依赖：须先收到签署的艺人同意函，第一笔汇款才可启动。",
     tags: ["SAFE","Tax Bureau","Wire Transfer","RMB→USD"],
     actionItems: [
       { id:"t1", text:"[STEP 1 — BLOCKER] Obtain signed Artist Consent Letter from WME/Shakira — required to unlock entire wire workflow", textZh:"【第一步 — 关键阻碍】获取WME/Shakira签署的艺人同意函——解锁全部汇款流程的前提", owner:"WME / Shakira Team", due:"URGENT", status:"blocked" },
       { id:"t2", text:"[STEP 1] Secure board/executive approval signatures from Scotti Bros Asia, SMG, and Jiushi Group", textZh:"【第一步】获取斯科蒂兄弟亚洲、SMG和久事集团的董事会/高管批准签字", owner:"Scotti Bros Asia / SMG / Jiushi", due:"3–5 biz days after consent letter", status:"open" },
-      { id:"t3", text:"[STEP 1] Finalize exact 25% binder fund financial requisition amount", textZh:"【第一步】确定25%保证金的精确金额", owner:"Scotti Bros Asia Finance", due:"3–5 biz days", status:"open" },
+      { id:"t3", text:"[STEP 1] Confirm $5,000,000 flat binder payment (Payment 1 of 3) — prepare financial requisition", textZh:"【第一步】确认500万美元固定保证金（第1笔，共3笔）——准备财务申请", owner:"Scotti Bros Asia Finance", due:"3–5 biz days after consent letter", status:"open" },
+      { id:"t3b", text:"[PAYMENT 2] Prepare $5,000,000 wire (25%) triggered upon Long-Form Contract signing", textZh:"【第二笔款】合同签署后启动500万美元（25%）电汇准备", owner:"Scotti Bros Asia Finance", due:"Upon contract signing", status:"open" },
+      { id:"t3c", text:"[PAYMENT 3] Prepare $10,000,000 wire (50% final balance) — due 60 days before first performance (est. Oct 13, 2026)", textZh:"【第三笔款】准备1000万美元（50%尾款）电汇——首场演出前60天（预计2026年10月13日）", owner:"Scotti Bros Asia Finance", due:"Oct 13, 2026", status:"open" },
       { id:"t4", text:"[STEP 2] Submit transaction profile to Shanghai Tax Bureau with binder letter + consent letter", textZh:"【第二步】向上海税务局提交交易档案，附保证金函和同意函", owner:"Shanghai Magic Live / Jiushi", due:"5–7 biz days after Step 1", status:"open" },
       { id:"t5", text:"[STEP 2] Pay 16% withholding tax and obtain official Tax Clearance Certificate", textZh:"【第二步】缴纳16%预扣税并获取税务清缴证明", owner:"Scotti Bros Asia Finance", due:"Within Step 2 window", status:"open" },
       { id:"t6", text:"[STEP 3] File outbound remittance application with SAFE for cross-border capital flow registration", textZh:"【第三步】向外汇管理局提交境外汇款申请，办理跨境资本流动登记", owner:"Jiushi Group / Legal Counsel", due:"4–6 biz days after Step 2", status:"open" },
@@ -484,8 +489,9 @@ function App() {
             <div style={{ ...S.card, padding:"18px 20px", marginBottom:16 }}>
               <div style={{ ...S.sectionTitle, marginBottom:14 }}>💰 {isZh?"付款时间表":"Payment Schedule"}</div>
               {[
-                [isZh?"定金（签约时）":"Deposit (on signing)", "$10,000,000 USD", isZh?"签署长格式合同时立即汇款":"Wire immediately upon execution of Long-Form Agreement"],
-                [isZh?"尾款（演出前30天）":"Balance (30 days pre-show)", "$10,000,000 USD", isZh?"首场演出前30天汇至WME托管账户":"Due 30 days before first performance to WME escrow"],
+                [isZh?"第一笔 — 保证金函签署时":"Payment 1 — Binder Signing", "$5,000,000 USD (25% flat)", isZh?"保证金函签署时立即汇付至WME · 启动14-21个工作日监管流程":"Wire to WME immediately upon binder signing · triggers 14–21 biz day regulatory process"],
+                [isZh?"第二笔 — 合同签署时":"Payment 2 — Contract Signing", "$5,000,000 USD (25%)", isZh?"长格式合同签署时汇付至WME · 同样需完整监管流程":"Wire to WME upon Long-Form Agreement execution · same regulatory workflow applies"],
+                [isZh?"第三笔 — 首场演出前60天":"Payment 3 — 60 Days Pre-Show", "$10,000,000 USD (50%)", isZh?"预计2026年10月13日（首场演出12月12日前60天）":"Est. Oct 13, 2026 (60 days before Dec 12 first performance)"],
               ].map(([k,v,n]) => (
                 <div key={k} style={{ background:"#12120a", borderRadius:8, padding:"12px 14px", marginBottom:8 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
@@ -496,7 +502,7 @@ function App() {
                 </div>
               ))}
               <div style={{ fontSize:11, color:"#5a5040", marginTop:8, padding:"8px 12px", background:"#0a0a08", borderRadius:6, border:"1px solid #1a1a0a" }}>
-                ⚠️ {isZh?"保证金转账预计需14-21个工作日（4个监管步骤）。关键阻碍：须先收到已签署的艺人同意函。":"Binder fund transfer requires 14–21 business days across 4 regulatory steps. Critical blocker: signed Artist Consent Letter must be received first."}
+                ⚠️ {isZh?"每笔款项均需14-21个工作日完成4步监管流程（税务局+SAFE+银行）。关键阻碍：须先收到已签署艺人同意函，第一笔汇款才可启动。第三笔须最迟10月13日前完成，建议9月初启动流程。":"Each payment requires 14–21 business days across 4 regulatory steps (Tax Bureau + SAFE + Bank). Critical blocker: signed Artist Consent Letter required before Payment 1 can proceed. Payment 3 deadline is Oct 13 — initiate regulatory process by early September."}
               </div>
             </div>
 
