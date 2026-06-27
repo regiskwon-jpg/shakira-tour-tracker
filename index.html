@@ -293,8 +293,7 @@ function App() {
   const [newEmail, setNewEmail] = useState({ date:"", from:"", to:"", subject:"", rawText:"" });
   const [parseLoading, setParseLoading] = useState(false);
   const [parseError, setParseError] = useState("");
-  const [apiKey, setApiKey] = useState("");
-  const [showKeyInput, setShowKeyInput] = useState(false);
+  // AI features handled via Netlify proxy (no client-side API key needed)
   const t = T[lang];
   const isZh = lang === "zh";
 
@@ -320,10 +319,9 @@ function App() {
   }
 
   async function callAPI(messages, system) {
-    const headers = { "Content-Type":"application/json" };
-    if (apiKey) headers["x-api-key"] = apiKey;
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method:"POST", headers,
+    const res = await fetch("/.netlify/functions/claude", {
+      method:"POST",
+      headers: { "Content-Type":"application/json" },
       body: JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:1000, system, messages }),
     });
     return res.json();
@@ -410,27 +408,12 @@ function App() {
                   </button>
                 ))}
               </div>
-              <button onClick={() => setShowKeyInput(!showKeyInput)}
-                style={{ fontSize:11, padding:"5px 12px", borderRadius:6, border:"1px solid #2a2a18", background:"#12120a", color: apiKey?"#4ade80":"#7a6a50", cursor:"pointer" }}>
-                {apiKey ? t.apiKeySet : t.apiKeyBtn}
-              </button>
+              {/* AI powered via Netlify backend */}
             </div>
           </div>
           <div style={{ fontSize:11, color:"#7a6a50", paddingLeft:20, paddingBottom:8 }}>{t.subtitle}</div>
 
-          {showKeyInput && (
-            <div style={{ background:"#12120a", border:"1px solid #2a2a18", borderRadius:8, padding:12, marginBottom:10 }} className="fade-in">
-              <div style={{ fontSize:11, color:"#7a6a50", marginBottom:6 }}>{t.apiKeyLabel}</div>
-              <div style={{ display:"flex", gap:8 }}>
-                <input type="password" placeholder="sk-ant-..." value={apiKey} onChange={e=>setApiKey(e.target.value)}
-                  style={{ ...S.input, flex:1 }} />
-                <button onClick={() => setShowKeyInput(false)}
-                  style={{ padding:"9px 14px", borderRadius:6, background:"#c9a227", color:"#0a0a0f", border:"none", fontWeight:700, cursor:"pointer", fontSize:13 }}>
-                  {t.apiKeySave}
-                </button>
-              </div>
-            </div>
-          )}
+
 
           {/* Stats */}
           <div style={{ display:"flex", gap:12, flexWrap:"wrap", paddingBottom:14 }}>
@@ -663,7 +646,6 @@ function App() {
           <div style={{ maxWidth:700 }} className="fade-in">
             <div style={{ fontSize:13, color:"#7a6a50", marginBottom:18 }}>
               {t.addEmailNote}
-              {!apiKey && <span style={{ color:"#fb923c" }}>{t.apiKeyNote}</span>}
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               {[
@@ -702,7 +684,6 @@ function App() {
           <div style={{ maxWidth:700 }} className="fade-in">
             <div style={{ fontSize:13, color:"#7a6a50", marginBottom:14 }}>
               {t.askNote}
-              {!apiKey && <span style={{ color:"#fb923c" }}>{t.apiKeyNote}</span>}
             </div>
             <div style={{ display:"flex", gap:8, marginBottom:14 }}>
               <input value={aiInput} onChange={e => setAiInput(e.target.value)}
