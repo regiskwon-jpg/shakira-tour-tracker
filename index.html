@@ -318,27 +318,13 @@ function App() {
     setAddingActionTo(null);
   }
 
-  const [manualKey, setManualKey] = React.useState(sessionStorage.getItem("ANTHROPIC_KEY")||"");
+  const [apiKey, setApiKey] = React.useState(sessionStorage.getItem("ANTHROPIC_KEY")||"");
   const [showKeyModal, setShowKeyModal] = React.useState(false);
 
   async function callAPI(messages, system) {
-    // Try Netlify proxy first
-    try {
-      const res = await fetch("/.netlify/functions/claude", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({model:"claude-sonnet-4-6", max_tokens:1000, system, messages}),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (!data.error) return data;
-      }
-    } catch(e) {}
-
-    // Fallback: direct browser call with manual key
-    const key = sessionStorage.getItem("ANTHROPIC_KEY");
+    const key = sessionStorage.getItem("ANTHROPIC_KEY") || apiKey;
     if (!key) { setShowKeyModal(true); throw new Error("NO_KEY"); }
-    const res2 = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
       method:"POST",
       headers:{
         "Content-Type":"application/json",
@@ -348,7 +334,7 @@ function App() {
       },
       body: JSON.stringify({model:"claude-sonnet-4-6", max_tokens:1000, system, messages}),
     });
-    return res2.json();
+    return res.json();
   }
 
   async function parseEmailWithAI() {
@@ -373,7 +359,7 @@ function App() {
       }]);
       setNewEmail({ date:"", from:"", to:"", subject:"", rawText:"" });
       setView("emails");
-    } catch(err) { setParseError(err.message === "NO_KEY" ? "API key required — enter it using the 🔑 button." : "Parse failed. Check your API key or email content and try again."); }
+    } catch(err) { setParseError(err.message === "NO_KEY" ? "Please set your API key first — tap the 🔑 button." : "Parse failed. Verify your API key is correct and try again."); }
     setParseLoading(false);
   }
 
@@ -387,7 +373,7 @@ function App() {
         `You are the operations analyst for the Shakira 2026 China Tour. Answer concisely. Current tracker: ${context}`
       );
       setAiResult((data.content||[]).map(b=>b.text||"").join("")||"No response.");
-    } catch(err) { setAiResult(err.message === "NO_KEY" ? "API key required — tap the 🔑 button above to enter it." : "Error connecting to AI. Please try again."); }
+    } catch(err) { setAiResult(err.message === "NO_KEY" ? "Please set your API key first — tap the 🔑 button." : "Error connecting to AI. Verify your API key and try again."); }
     setAiLoading(false); setAiInput("");
   }
 
@@ -432,13 +418,13 @@ function App() {
                   </button>
                 ))}
               </div>
-              {/* API Key fallback button */}
+              {/* API Key button */}
               <button onClick={() => setShowKeyModal(true)}
                 style={{fontSize:11,padding:"5px 12px",borderRadius:6,border:"1px solid #2a2a18",
                   background:"#12120a",
-                  color: sessionStorage.getItem("ANTHROPIC_KEY") ? "#4ade80" : "#7a6a50",
-                  cursor:"pointer"}}>
-                {sessionStorage.getItem("ANTHROPIC_KEY") ? (isZh?"🔑 已设置":"🔑 Key Set") : (isZh?"🔑 API密钥":"🔑 API Key")}
+                  color: apiKey ? "#4ade80" : "#f87171",
+                  cursor:"pointer",fontWeight:700}}>
+                {apiKey ? (isZh?"🔑 已设置":"🔑 Key Set ✓") : (isZh?"🔑 设置API密钥":"🔑 Set API Key")}
               </button>
             </div>
           </div>
@@ -748,21 +734,22 @@ function App() {
         {showKeyModal && (
           <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.85)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
             <div style={{background:"#12120a",border:"1px solid #c9a227",borderRadius:12,padding:24,maxWidth:400,width:"100%"}} className="fade-in">
-              <div style={{fontSize:16,fontWeight:800,color:"#c9a227",marginBottom:8}}>🔑 {isZh?"请输入API密钥":"API Key Required"}</div>
+              <div style={{fontSize:16,fontWeight:800,color:"#c9a227",marginBottom:8}}>🔑 {isZh?"设置 Anthropic API 密钥":"Set Anthropic API Key"}</div>
               <div style={{fontSize:12,color:"#7a6a50",marginBottom:16,lineHeight:1.6}}>
                 {isZh
-                  ? "Netlify函数未响应。请输入您的Anthropic API密钥以启用AI功能。密钥仅存储在本次浏览器会话中。"
-                  : "The Netlify backend function is not responding. Enter your Anthropic API key to enable AI features. It is stored only for this browser session."}
+                  ? "请输入您的Anthropic API密钥以启用AI解析和问询功能。密钥仅存储在本次浏览器会话中，关闭浏览器后自动清除。"
+                  : "Enter your Anthropic API key to enable AI features (Parse Email & Ask AI). Stored only for this browser session — cleared when you close the tab."}
               </div>
               <input type="password" placeholder="sk-ant-api03-..."
-                value={manualKey}
-                onChange={e => setManualKey(e.target.value)}
+                value={apiKey}
+                onChange={e => setApiKey(e.target.value)}
                 style={{width:"100%",background:"#0a0a0f",border:"1px solid #3a3a28",borderRadius:6,padding:"10px 12px",color:"#e8e6e0",fontSize:13,marginBottom:12}}
               />
               <div style={{display:"flex",gap:8}}>
                 <button onClick={() => {
                   if (manualKey.trim()) {
                     sessionStorage.setItem("ANTHROPIC_KEY", manualKey.trim());
+                    setApiKey(manualKey.trim());
                     setShowKeyModal(false);
                   }
                 }} style={{flex:1,padding:"10px",borderRadius:7,background:"#c9a227",color:"#0a0a0f",border:"none",fontWeight:800,fontSize:13,cursor:"pointer"}}>
